@@ -14,7 +14,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def create_access_token(
-    subject: Union[str, Any], expires_delta: timedelta = None
+    subject: Union[str, Any], expires_delta: timedelta = None, extra_claims: dict[str, Any] | None = None
 ) -> str:
     """Create JWT access token."""
     if expires_delta:
@@ -25,12 +25,14 @@ def create_access_token(
         )
 
     to_encode = {"exp": expire, "sub": str(subject), "type": "access"}
+    if extra_claims:
+        to_encode.update(extra_claims)
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 
 
 def create_refresh_token(
-    subject: Union[str, Any], expires_delta: timedelta = None
+    subject: Union[str, Any], expires_delta: timedelta = None, extra_claims: dict[str, Any] | None = None
 ) -> str:
     """Create JWT refresh token."""
     if expires_delta:
@@ -41,6 +43,8 @@ def create_refresh_token(
         )
 
     to_encode = {"exp": expire, "sub": str(subject), "type": "refresh"}
+    if extra_claims:
+        to_encode.update(extra_claims)
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 

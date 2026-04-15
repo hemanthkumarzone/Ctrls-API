@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.db.session import get_db
-from app.models import User
+from app.models import Agent, User
 
 # OAuth2 scheme for token extraction
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
@@ -24,6 +24,11 @@ def get_current_user(
     try:
         from app.core.security import verify_token
         payload = verify_token(token)
+        if payload.get("type") != "access":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token type",
+            )
         user_id = payload.get("sub")
         if not user_id:
             raise HTTPException(
@@ -43,6 +48,40 @@ def get_current_user(
             detail="User not found",
         )
     return user
+
+
+def get_current_agent(
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+) -> Agent:
+    """Get current authenticated agent."""
+    try:
+        from app.core.security import verify_token
+        payload = verify_token(token)
+        if payload.get("type") != "agent":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid agent token",
+            )
+        agent_id = payload.get("sub")
+        if not agent_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token payload",
+            )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
+
+    agent = db.query(Agent).filter(Agent.id == agent_id).first()
+    if not agent:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Agent not found",
+        )
+    return agent
 
 
 def get_current_tenant_id(request: Request) -> str:

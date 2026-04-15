@@ -5,7 +5,7 @@ Authentication endpoints.
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -24,10 +24,14 @@ auth_service = AuthService()
 def login(
     db: Session = Depends(deps.get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
+    tenant_id: str | None = Query(None, description="Optional tenant ID for scoped login"),
 ) -> Any:
     """Login endpoint."""
     user = auth_service.authenticate_user(
-        db, email=form_data.username, password=form_data.password
+        db,
+        email=form_data.username,
+        password=form_data.password,
+        tenant_id=tenant_id,
     )
     if not user:
         raise HTTPException(
@@ -37,9 +41,17 @@ def login(
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = security.create_access_token(
-        subject=user.id, expires_delta=access_token_expires
+        subject=user.id,
+        expires_delta=access_token_expires,
+        extra_claims={
+            "tenant_id": user.tenant_id,
+            "roles": [user.role],
+        },
     )
-    refresh_token = security.create_refresh_token(subject=user.id)
+    refresh_token = security.create_refresh_token(
+        subject=user.id,
+        extra_claims={"tenant_id": user.tenant_id},
+    )
 
     return {
         "access_token": access_token,
@@ -70,6 +82,7 @@ def register(
 @router.post("/refresh", response_model=schemas.Token)
 def refresh_token(
     token_in: schemas.RefreshToken,
+    db: Session = Depends(deps.get_db),
 ) -> Any:
     """Refresh access token."""
     try:
@@ -81,22 +94,47 @@ def refresh_token(
             )
 
         user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token",
+            )
+
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = security.create_access_token(
-            subject=user_id, expires_delta=access_token_expires
+            subject=user.id,
+            expires_delta=access_token_expires,
+            extra_claims={
+                "tenant_id": user.tenant_id,
+                "roles": [user.role],
+            },
         )
-        refresh_token = security.create_refresh_token(subject=user_id)
+        refresh_token = security.create_refresh_token(
+            subject=user.id,
+            extra_claims={"tenant_id": user.tenant_id},
+        )
 
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
             "token_type": "bearer",
+            "user": schemas.User.from_orm(user),
         }
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token",
         )
+
+
+@router.post("/logout", response_model=dict)
 def logout(current_user: User = Depends(deps.get_current_user)) -> Any:
     """Logout endpoint - client should discard tokens."""
     return {"message": "Successfully logged out"}

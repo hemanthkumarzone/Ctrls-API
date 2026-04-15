@@ -315,9 +315,123 @@ class Agent(TimestampMixin, TenantMixin, Base):
         Enum(AgentStatus, name="agent_status"), default=AgentStatus.ACTIVE
     )
     config: Mapped[dict] = mapped_column(JSONB, default=dict)     # tools, system prompt hash, etc.
+    auth_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     tenant: Mapped[Tenant] = relationship("Tenant", back_populates="agents")
     jobs: Mapped[list[OrchestrationJob]] = relationship("OrchestrationJob", back_populates="agent")
+
+
+class Resource(TimestampMixin, TenantMixin, Base):
+    """Normalized resource identity for compute, GPU, host, pod, and service."""
+    __tablename__ = "resources"
+
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    tenant_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    provider: Mapped[str] = mapped_column(String(50), nullable=False)
+    resource_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    external_id: Mapped[str | None] = mapped_column(String(512))
+    name: Mapped[str | None] = mapped_column(String(255))
+    region: Mapped[str | None] = mapped_column(String(100))
+    tags: Mapped[dict] = mapped_column(JSONB, default=dict)
+    metadata_: Mapped[dict] = mapped_column("metadata", JSONB, default=dict)
+    agent_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("agents.id", ondelete="SET NULL"), index=True
+    )
+    parent_resource_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("resources.id", ondelete="SET NULL"), index=True
+    )
+
+    tenant: Mapped[Tenant] = relationship("Tenant")
+    agent: Mapped[Agent | None] = relationship("Agent")
+    metric_samples: Mapped[list[MetricSample]] = relationship("MetricSample", back_populates="resource")
+    inference_requests: Mapped[list[InferenceRequest]] = relationship(
+        "InferenceRequest", back_populates="resource"
+    )
+    children: Mapped[list[Resource]] = relationship(
+        "Resource",
+        backref="parent",
+        remote_side="Resource.parent_resource_id",
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "provider",
+            "resource_type",
+            "external_id",
+            name="uq_resource_tenant_provider_type_external",
+        ),
+        Index("ix_resource_tenant_provider_type", "tenant_id", "provider", "resource_type"),
+    )
+
+
+class MetricSample(TimestampMixin, TenantMixin, Base):
+    """Raw metric sample ingested from agents."""
+    __tablename__ = "metric_samples"
+
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    tenant_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    resource_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("resources.id", ondelete="SET NULL"), index=True
+    )
+    agent_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("agents.id", ondelete="SET NULL"), index=True
+    )
+    metric_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    value: Mapped[Decimal] = mapped_column(Numeric(20, 6), nullable=False)
+    unit: Mapped[str | None] = mapped_column(String(50))
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    dimensions: Mapped[dict] = mapped_column(JSONB, default=dict)
+    raw: Mapped[dict] = mapped_column(JSONB, default=dict)
+
+    resource: Mapped[Resource | None] = relationship("Resource", back_populates="metric_samples")
+    agent: Mapped[Agent | None] = relationship("Agent")
+
+    __table_args__ = (
+        Index("ix_metric_samples_tenant_ts", "tenant_id", "timestamp"),
+        Index("ix_metric_samples_tenant_res_ts", "tenant_id", "resource_id", "timestamp"),
+        Index("ix_metric_samples_tenant_metric_ts", "tenant_id", "metric_name", "timestamp"),
+    )
+
+
+class InferenceRequest(TimestampMixin, TenantMixin, Base):
+    """AI inference request event."""
+    __tablename__ = "inference_requests"
+
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    tenant_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    resource_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("resources.id", ondelete="SET NULL"), index=True
+    )
+    agent_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("agents.id", ondelete="SET NULL"), index=True
+    )
+    model_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    request_id: Mapped[str | None] = mapped_column(String(255))
+    status: Mapped[str] = mapped_column(String(50), nullable=False)
+    latency_ms: Mapped[Decimal | None] = mapped_column(Numeric(12, 6))
+    input_tokens: Mapped[int | None] = mapped_column(BigInteger)
+    output_tokens: Mapped[int | None] = mapped_column(BigInteger)
+    gpu_ms: Mapped[Decimal | None] = mapped_column(Numeric(12, 6))
+    cost_usd: Mapped[Decimal] = mapped_column(Numeric(14, 6), default=Decimal("0"))
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    dimensions: Mapped[dict] = mapped_column(JSONB, default=dict)
+    raw: Mapped[dict] = mapped_column(JSONB, default=dict)
+
+    resource: Mapped[Resource | None] = relationship("Resource", back_populates="inference_requests")
+    agent: Mapped[Agent | None] = relationship("Agent")
+
+    __table_args__ = (
+        Index("ix_inference_requests_tenant_ts", "tenant_id", "timestamp"),
+        Index("ix_inference_requests_tenant_model_ts", "tenant_id", "model_name", "timestamp"),
+    )
 
 
 class OrchestrationJob(TimestampMixin, TenantMixin, Base):

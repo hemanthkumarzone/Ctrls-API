@@ -15,6 +15,7 @@ from app.api.v1.endpoints import (
     k8s,
     accelerators,
     agents,
+    ingest,
     metrics,
     dashboard,
     cost_analyzer,
@@ -41,6 +42,7 @@ api_router.include_router(cloud_accounts.router, prefix="/cloud-accounts", tags=
 api_router.include_router(k8s.router, prefix="/k8s", tags=["k8s"])
 api_router.include_router(accelerators.router, prefix="/accelerators", tags=["accelerators"])
 api_router.include_router(agents.router, prefix="/agents", tags=["agents"])
+api_router.include_router(ingest.router, prefix="/ingest", tags=["ingest"])
 api_router.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
 api_router.include_router(metrics.router, prefix="/metrics", tags=["metrics"])
 api_router.include_router(cost.router, prefix="/cost", tags=["cost"])

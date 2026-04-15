@@ -26,16 +26,11 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
 
     # Database
-    # POSTGRES_SERVER: str = "localhost"
-    # POSTGRES_USER: str = "finops"
-    # POSTGRES_PASSWORD: str = "finops"
-    # POSTGRES_DB: str = "finops"
-    # POSTGRES_PORT: int = 5432
-    POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
-    POSTGRES_USER = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_DB = os.getenv("POSTGRES_DB")
-    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", 5432))
+    POSTGRES_SERVER: str | None = os.getenv("POSTGRES_SERVER")
+    POSTGRES_USER: str | None = os.getenv("POSTGRES_USER")
+    POSTGRES_PASSWORD: str | None = os.getenv("POSTGRES_PASSWORD")
+    POSTGRES_DB: str | None = os.getenv("POSTGRES_DB")
+    POSTGRES_PORT: int = int(os.getenv("POSTGRES_PORT", 5432))
 
     @computed_field
     @property
@@ -54,6 +49,9 @@ class Settings(BaseSettings):
     @property
     def REDIS_URL(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+
+    # Agent auth
+    AGENT_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
     # CORS
     ALLOWED_HOSTS: List[str] = ["*"]

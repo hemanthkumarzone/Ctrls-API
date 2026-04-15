@@ -12,9 +12,17 @@ from app.schemas.user import UserCreate, UserUpdate
 class UserService:
     """User service."""
 
-    def get_users(self, db: Session, skip: int = 0, limit: int = 100) -> list[User]:
-        """Get all users."""
-        return user_repo.get_multi(db, skip=skip, limit=limit)
+    def get_users(
+        self, db: Session, tenant_id: str, skip: int = 0, limit: int = 100
+    ) -> list[User]:
+        """Get users for a tenant."""
+        return (
+            db.query(User)
+            .filter(User.tenant_id == tenant_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     def get_user(self, db: Session, user_id: str) -> User | None:
         """Get user by ID."""

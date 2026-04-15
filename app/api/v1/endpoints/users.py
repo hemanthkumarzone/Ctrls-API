@@ -38,7 +38,7 @@ def update_user_me(
 
 @router.get("/", response_model=List[schemas.User])
 def read_users(
-    db: Session = Depends(deps.get_db_with_tenant),
+    db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
     current_user: User = Depends(deps.get_current_user),
@@ -49,14 +49,14 @@ def read_users(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions",
         )
-    users = user_service.get_users(db, skip=skip, limit=limit)
+    users = user_service.get_users(db, current_user.tenant_id, skip=skip, limit=limit)
     return users
 
 
 @router.post("/", response_model=schemas.User)
 def create_user(
     *,
-    db: Session = Depends(deps.get_db_with_tenant),
+    db: Session = Depends(deps.get_db),
     user_in: schemas.UserCreate,
     current_user: User = Depends(deps.get_current_user),
 ) -> Any:
@@ -66,7 +66,9 @@ def create_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions",
         )
-    user = user_service.create_user(db, user_in)
+    user_data = user_in.dict()
+    user_data["tenant_id"] = current_user.tenant_id
+    user = user_service.create_user(db, schemas.UserCreate(**user_data))
     return user
 
 

@@ -12,6 +12,8 @@ from .cost import (
 from .job import Job, JobCreate, JobUpdate
 from .tenant import Tenant, TenantCreate, TenantUpdate
 from .user import User, UserCreate, UserUpdate
+from .agent import Agent, AgentCreate, AgentWithToken
+from .ingest import ResourceRef, MetricBatch, InferenceBatch
 from .dashboard import DashboardSummary, SpendTrendPoint, CostByCategory, TopService
 from .cost_analyzer import ServiceCost, CostByProvider, UsageMetric
 from .recommendation import Recommendation, RecommendationUpdate, SavingsSummary
@@ -38,6 +40,12 @@ __all__ = [
     "Tenant",
     "TenantCreate",
     "TenantUpdate",
+    "Agent",
+    "AgentCreate",
+    "AgentWithToken",
+    "ResourceRef",
+    "MetricBatch",
+    "InferenceBatch",
     "Job",
     "JobCreate",
     "JobUpdate",

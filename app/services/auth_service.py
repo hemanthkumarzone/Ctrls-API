@@ -13,9 +13,22 @@ from app.schemas.user import UserCreate
 class AuthService:
     """Authentication service."""
 
-    def authenticate_user(self, db: Session, email: str, password: str) -> User | None:
+    def authenticate_user(
+        self,
+        db: Session,
+        email: str,
+        password: str,
+        tenant_id: str | None = None,
+    ) -> User | None:
         """Authenticate user with email and password."""
-        user = db.query(User).filter(User.email == email).first()
+        if tenant_id:
+            user = user_repo.get_by_tenant_and_email(db, tenant_id=tenant_id, email=email)
+        else:
+            candidates = db.query(User).filter(User.email == email).all()
+            if len(candidates) > 1:
+                return None
+            user = candidates[0] if candidates else None
+
         if not user:
             return None
         if not verify_password(password, user.password_hash):
