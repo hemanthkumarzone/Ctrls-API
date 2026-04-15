@@ -1,7 +1,7 @@
 # FinOps Dashboard — Complete API Documentation (78 Endpoints)
 
-> **Base URL:** `http://localhost:8000` (set via `VITE_API_BASE_URL` in `.env`)  
-> **Mock Mode:** `VITE_USE_MOCK=true` intercepts all calls and returns `fakedata.json` slices  
+> **Base URL:** `http://localhost:8001` (set via `VITE_API_BASE_URL` in `.env`)
+> **Mock Mode:** `VITE_USE_MOCK=true` intercepts all calls and returns `fakedata.json` slices
 > **Auth Header:** `Authorization: Bearer <token>` (all modules except auth)  
 > **Content-Type:** `application/json`
 
