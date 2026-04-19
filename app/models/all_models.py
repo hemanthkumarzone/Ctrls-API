@@ -350,10 +350,15 @@ class Resource(TimestampMixin, TenantMixin, Base):
     inference_requests: Mapped[list[InferenceRequest]] = relationship(
         "InferenceRequest", back_populates="resource"
     )
+    parent: Mapped[Resource | None] = relationship(
+        "Resource",
+        back_populates="children",
+        remote_side=[id],
+    )
     children: Mapped[list[Resource]] = relationship(
         "Resource",
-        backref="parent",
-        remote_side="Resource.parent_resource_id",
+        back_populates="parent",
+        cascade="all, delete-orphan",
     )
 
     __table_args__ = (
@@ -478,8 +483,16 @@ class OrchestrationJob(TimestampMixin, TenantMixin, Base):
     cost_aggregate: Mapped[JobCostAggregate | None] = relationship(
         "JobCostAggregate", back_populates="job", uselist=False
     )
+    parent: Mapped[OrchestrationJob | None] = relationship(
+        "OrchestrationJob",
+        back_populates="children",
+        remote_side="[OrchestrationJob.id]",
+        foreign_keys="[OrchestrationJob.parent_job_id]",
+    )
     children: Mapped[list[OrchestrationJob]] = relationship(
-        "OrchestrationJob", backref="parent", remote_side="OrchestrationJob.parent_job_id"
+        "OrchestrationJob",
+        back_populates="parent",
+        foreign_keys="[OrchestrationJob.parent_job_id]",
     )
 
 

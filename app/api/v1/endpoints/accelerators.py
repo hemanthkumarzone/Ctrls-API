@@ -1,9 +1,0 @@
-"""
-Accelerator management endpoints.
-"""
-
-from fastapi import APIRouter
-
-router = APIRouter()
-
-# TODO: Implement accelerator CRUD and utilization endpoints

@@ -25,6 +25,16 @@ class TenantCreate(BaseModel):
     plan: str = "starter"
 
 
+class OrgAdminCreate(BaseModel):
+    """Organization creation with admin user."""
+    org_name: str
+    org_slug: str
+    org_plan: str = "starter"
+    admin_email: str
+    admin_password: str
+    admin_name: str
+
+
 class TenantUpdate(BaseModel):
     """Tenant update schema."""
     name: Optional[str] = None

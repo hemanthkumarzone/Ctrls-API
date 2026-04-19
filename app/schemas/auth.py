@@ -29,3 +29,12 @@ class TokenPayload(BaseModel):
 class RefreshToken(BaseModel):
     """Refresh token request schema."""
     refresh_token: str
+
+
+class UserRegister(BaseModel):
+    """User registration schema (requires organization)."""
+    email: str
+    password: str
+    org_slug: str
+    org_admin_name: str
+    role: str = "viewer"
