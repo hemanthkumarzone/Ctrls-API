@@ -25,7 +25,7 @@ from .unit_economics import UnitEconomicsSummary, CostPerUserTrend, BenchmarkCom
 from .forecasting import ForecastScenario, ForecastPoint, WhatIfResult, WhatIfAssumptions, CostDriver, CostDriverUpdate, ForecastAccuracy
 from .budget import Budget, BudgetCreate, BudgetUpdate, BudgetStatus, BudgetAlertSettings, BudgetBase, DailyBurnRate
 from .payment_receipt import PaymentReceipt, PaymentReceiptDownload, PaymentReceiptSummary
-from .category import Category, CategoryTrend, CategoryServices
+from .category import Category, CategoryTrend, CategoryServices, CategoryExport, MomChange
 from .k8s import K8sCluster, K8sNamespace, ClusterSummary
 from .k8s import K8sCluster, K8sNamespace, ClusterSummary
 
@@ -124,4 +124,6 @@ __all__ = [
     "Category",
     "CategoryTrend",
     "CategoryServices",
+    "CategoryExport",
+    "MomChange",
 ]

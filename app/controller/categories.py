@@ -1,37 +1,78 @@
 """Categories controller."""
 
-from typing import Any
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
-from fastapi import APIRouter
+from app.api.deps import get_db, get_current_user
+from app import schemas
+from app.services.category_service import category_service
 
 categories_controller = APIRouter(prefix="/categories", tags=["Categories"])
 
 
-@categories_controller.get("")
-def get_categories() -> list[dict[str, Any]]:
-    return [{"name": "Compute", "value": 120000, "change": 8.2}, {"name": "Storage", "value": 54000, "change": -3.1}]
+@categories_controller.get("", response_model=list[schemas.Category])
+def get_categories(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> list[schemas.Category]:
+    return category_service.get_categories(db, current_user.tenant_id)
 
 
-@categories_controller.get("/{category_id}")
-def get_category(category_id: str) -> dict[str, Any]:
-    return {"name": "Compute", "value": 120000, "change": 8.2}
+@categories_controller.get("/{category_id}", response_model=schemas.Category)
+def get_category(
+    category_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.Category:
+    try:
+        return category_service.get_category(db, current_user.tenant_id, category_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Category not found")
 
 
-@categories_controller.get("/{category_id}/trend")
-def get_category_trend(category_id: str) -> list[dict[str, Any]]:
-    return [{"month": "Apr 2025", "value": 95000}, {"month": "Mar 2026", "value": 120000}]
+@categories_controller.get("/{category_id}/trend", response_model=list[schemas.CategoryTrend])
+def get_category_trend(
+    category_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> list[schemas.CategoryTrend]:
+    try:
+        return category_service.get_category_trend(db, current_user.tenant_id, category_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Category not found")
 
 
-@categories_controller.get("/{category_id}/services")
-def get_category_services(category_id: str) -> list[dict[str, Any]]:
-    return [{"name": "EC2 Instances", "provider": "AWS", "cost": 68500}]
+@categories_controller.get("/{category_id}/services", response_model=list[schemas.CategoryServices])
+def get_category_services(
+    category_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> list[schemas.CategoryServices]:
+    try:
+        return category_service.get_category_services(db, current_user.tenant_id, category_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Category not found")
 
 
-@categories_controller.get("/{category_id}/mom-change")
-def get_category_mom_change(category_id: str) -> dict[str, Any]:
-    return {"category": "Compute", "change": 8.2}
+@categories_controller.get("/{category_id}/mom-change", response_model=schemas.MomChange)
+def get_category_mom_change(
+    category_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.MomChange:
+    try:
+        return category_service.get_category_mom_change(db, current_user.tenant_id, category_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Category not found")
 
 
-@categories_controller.get("/{category_id}/export")
-def export_category(category_id: str) -> dict[str, Any]:
-    return {"downloadUrl": f"/exports/{category_id}_export.csv"}
+@categories_controller.get("/{category_id}/export", response_model=schemas.CategoryExport)
+def export_category(
+    category_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.CategoryExport:
+    try:
+        return category_service.export_category(db, current_user.tenant_id, category_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Category not found")
