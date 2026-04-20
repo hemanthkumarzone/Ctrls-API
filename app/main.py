@@ -14,11 +14,15 @@ from app.controller import (
     anomalies_controller,
     kubernetes_controller,
     cost_allocation_controller,
+    cost_analyzer_controller,
+    categories_controller,
     unit_economics_controller,
     budgets_controller,
     virtual_tags_controller,
     reports_controller,
     forecasting_controller,
+    payment_receipts_controller,
+    users_controller,
     tenant_controller,
     user_operations_controller,
 
@@ -68,37 +72,25 @@ app.add_middleware(TenantMiddleware)
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(ExceptionHandlerMiddleware)
 
-# Routers
-# app.include_router(api_router, prefix=settings.API_V1_STR, )
+# Register all routers
+app.include_router(anomalies_controller)
+app.include_router(auth_controller)
+app.include_router(categories_controller)
+app.include_router(cost_allocation_controller)
+app.include_router(cost_analyzer_controller)
+app.include_router(dashboard_controller)
+app.include_router(forecasting_controller)
+app.include_router(kubernetes_controller)
+app.include_router(recommendations_controller)
+app.include_router(reports_controller)
+app.include_router(payment_receipts_controller)
+app.include_router(tenant_controller)
+app.include_router(unit_economics_controller)
+app.include_router(budgets_controller)
+app.include_router(users_controller)
+app.include_router(user_operations_controller)
+app.include_router(virtual_tags_controller)
 
-def create_app():
-    """Create and configure the FastAPI application"""
-    try:
-        # Create database tables
-        Base.metadata.create_all(bind=engine)
-    except Exception as e:
-        raise
-    
-    # Register all routers
-    app.include_router(anomalies_controller)
-    app.include_router(auth_controller)
-    app.include_router(cost_allocation_controller)
-    app.include_router(dashboard_controller)
-    app.include_router(forecasting_controller)
-    app.include_router(kubernetes_controller)
-    app.include_router(recommendations_controller)
-    app.include_router(reports_controller)
-    app.include_router(tenant_controller)
-    app.include_router(unit_economics_controller)
-    app.include_router(budgets_controller)
-    app.include_router(user_operations_controller)
-    app.include_router(virtual_tags_controller)
-   
-    
-    
-    return app
-
-create_app()
 
 @app.get("/health")
 async def health_check():

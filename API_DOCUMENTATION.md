@@ -519,59 +519,268 @@ curl -X DELETE "http://localhost:8000/tenants/tenant-uuid" \
 }
 ```
 
-**Error Responses:**
-- `404 Not Found`: Tenant not found
+## Dashboard Endpoints
 
-### 5. Get Users
-Retrieve all users in the organization. (Placeholder implementation)
+### 14. Dashboard Summary
+Get dashboard summary metrics.
 
-**Endpoint:** `GET /user-operations/users`
+**Endpoint:** `GET /dashboard/summary`
 
-**Request:**
-```bash
-curl -X GET "http://localhost:8000/user-operations/users" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
-
-**Response (200 OK):**
-```json
-[]
-```
-
-### 6. Delete User
-Delete a user by ID. (Placeholder implementation)
-
-**Endpoint:** `DELETE /user-operations/users/{user_id}`
-
-**Request:**
-```bash
-curl -X DELETE "http://localhost:8000/user-operations/users/user-uuid" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
+**Auth:** Bearer token required
 
 **Response (200 OK):**
 ```json
 {
-  "message": "User deleted successfully"
+  "status": "success",
+  "data": {
+    "total_cost": 0,
+    "monthly_trend": [],
+    "top_services": []
+  }
 }
 ```
 
-## API Endpoints Created
+### 15. Cost by Category
+Get cost breakdown by category.
+
+**Endpoint:** `GET /dashboard/cost-by-category`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
 ```
-POST /tenants/register-org
-POST /auth/register
-POST /auth/login
-POST /auth/logout  
-POST /auth/refresh
-POST /user-operations/create-user
-GET  /user-operations/users
-DELETE /user-operations/users/{user_id}
-POST /tenants/
-GET  /tenants/
-GET  /tenants/{tenant_id}
-GET  /tenants/by-slug/{slug}
-PUT  /tenants/{tenant_id}
-DELETE /tenants/{tenant_id}
+
+### 16. Spend Trend
+Get spending trend over time.
+
+**Endpoint:** `GET /dashboard/spend-trend`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+### 17. Top Services
+Get top services by cost.
+
+**Endpoint:** `GET /dashboard/top-services`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Recommendations Endpoints
+
+### 18. Get Recommendations
+Get optimization recommendations.
+
+**Endpoint:** `GET /recommendations`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Anomalies Endpoints
+
+### 19. Get Anomalies
+Get detected anomalies.
+
+**Endpoint:** `GET /anomalies`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Kubernetes Endpoints
+
+### 20. Get Clusters
+Get Kubernetes clusters.
+
+**Endpoint:** `GET /kubernetes/clusters`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+### 21. Get Namespaces
+Get Kubernetes namespaces.
+
+**Endpoint:** `GET /kubernetes/namespaces`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Cost Allocation Endpoints
+
+### 22. Get Teams
+Get cost allocation by teams.
+
+**Endpoint:** `GET /cost-allocation/teams`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Unit Economics Endpoints
+
+### 23. Get Trends
+Get unit economics trends.
+
+**Endpoint:** `GET /unit-economics/trends`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Budgets Endpoint
+
+### 24. Get Budgets
+Get budgets list.
+
+**Endpoint:** `GET /budgets`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Reports Endpoint
+
+### 25. Get Reports
+Get reports list.
+
+**Endpoint:** `GET /reports`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Forecasting Endpoints
+
+### 26. Get Forecast
+Get forecasting data.
+
+**Endpoint:** `GET /forecasting/forecast`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+### 27. Get Drivers
+Get forecast drivers.
+
+**Endpoint:** `GET /forecasting/drivers`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+### 28. Get Historical Accuracy
+Get historical forecast accuracy.
+
+**Endpoint:** `GET /forecasting/historical-accuracy`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
+```
+
+## Virtual Tags Endpoint
+
+### 29. Get Virtual Tags
+Get virtual tags.
+
+**Endpoint:** `GET /virtual-tags`
+
+**Auth:** Bearer token required
+
+**Response (200 OK):**
+```json
+{
+  "status": "success",
+  "data": []
+}
 ```
 
 ## Important: Organization-Based Registration
