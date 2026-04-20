@@ -114,6 +114,8 @@ __all__ = [
     "BudgetUpdate",
     "BudgetStatus",
     "BudgetAlertSettings",
+    "BudgetBase",
+    "DailyBurnRate",
     # Payment Receipt
     "PaymentReceipt",
     "PaymentReceiptDownload",
