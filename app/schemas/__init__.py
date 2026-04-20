@@ -17,7 +17,7 @@ from .ingest import ResourceRef, MetricBatch, InferenceBatch
 from .dashboard import DashboardSummary, SpendTrendPoint, CostByCategory, TopService, DashboardRefresh
 from .cost_analyzer import ServiceCost, CostByProvider, UsageMetric
 from .recommendation import Recommendation, RecommendationUpdate, SavingsSummary, RecommendationBase, RecommendationImpact
-from .anomaly import Anomaly, AnomalySeverity, AlertsSummary
+from .anomaly import Anomaly, AnomalySeverity, AlertsSummary, AnomalyInvestigation, AnomalyTimeline, AnomalyStatistics
 from .report import Report, ReportCreate, ReportUpdate, ReportGenerate, ReportSchedule, ReportDownload
 from .virtual_tag import VirtualTag, TagCoverage, TagRuleCreate, TagRuleUpdate, TagMapping, TagMappingCreate
 from .cost_allocation import Team, CostAllocationRule, TreemapNode, VarianceAnalysis, TeamBase, TeamBreakdown, CostAllocationRuleBase, CostAllocationRuleUpdate
@@ -74,6 +74,9 @@ __all__ = [
     # Anomaly
     "Anomaly",
     "AnomalySeverity",
+    "AnomalyInvestigation",
+    "AnomalyTimeline",
+    "AnomalyStatistics",
     "AlertsSummary",
     # Report
     "Report",

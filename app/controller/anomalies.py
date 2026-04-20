@@ -2,67 +2,119 @@
 
 from typing import Any
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.api.deps import get_db, get_current_user
+from app import schemas
+from app.services.anomalies_service import anomalies_service
+from sqlalchemy.orm import Session
 
 anomalies_controller = APIRouter(prefix="/anomalies", tags=["Anomalies"])
 
 
-@anomalies_controller.get("")
-def get_anomalies() -> list[dict[str, Any]]:
-    return [
-        {"id": "anom-1", "service": "Lambda Functions", "detectedAt": "2026-03-12T14:32:00Z", "severity": "Critical", "spike": 340, "description": "Sudden 340% spike in Lambda invocations.", "data": [10, 12, 11, 13, 12, 45, 48]},
-    ]
+@anomalies_controller.get("", response_model=list[schemas.Anomaly])
+def get_anomalies(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> list[schemas.Anomaly]:
+    """Get all anomalies for the current tenant."""
+    return anomalies_service.get_anomalies(db, current_user.tenant_id)
 
 
-@anomalies_controller.get("/{anomaly_id}")
-def get_anomaly(anomaly_id: str) -> dict[str, Any]:
-    return {"id": anomaly_id, "service": "Lambda Functions", "detectedAt": "2026-03-12T14:32:00Z", "severity": "Critical", "spike": 340, "description": "Sudden 340% spike in Lambda invocations.", "data": [10, 12, 11, 13, 12, 45, 48]}
+@anomalies_controller.get("/{anomaly_id}", response_model=schemas.Anomaly)
+def get_anomaly(
+    anomaly_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.Anomaly:
+    """Get a specific anomaly by ID."""
+    anomaly = anomalies_service.get_anomaly(db, current_user.tenant_id, anomaly_id)
+    if not anomaly:
+        raise HTTPException(status_code=404, detail="Anomaly not found")
+    return anomaly
 
 
-@anomalies_controller.get("/filter")
-def filter_anomalies(severity: str | None = None) -> list[dict[str, Any]]:
-    return [{"id": "anom-1", "service": "Lambda Functions", "detectedAt": "2026-03-12T14:32:00Z", "severity": severity or "Critical", "spike": 340}]
+@anomalies_controller.get("/filter/by-severity", response_model=list[schemas.Anomaly])
+def filter_anomalies(
+    severity: str | None = None,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> list[schemas.Anomaly]:
+    """Filter anomalies by severity."""
+    return anomalies_service.filter_anomalies(db, current_user.tenant_id, severity)
 
 
-@anomalies_controller.get("/severity")
-def get_anomalies_severity() -> list[dict[str, Any]]:
-    return [{"severity": "Critical", "count": 1}, {"severity": "High", "count": 2}, {"severity": "Medium", "count": 2}]
+@anomalies_controller.get("/severity-counts", response_model=list[schemas.AnomalySeverity])
+def get_anomalies_severity(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> list[schemas.AnomalySeverity]:
+    """Get anomaly counts by severity."""
+    return anomalies_service.get_anomalies_severity(db, current_user.tenant_id)
 
 
-@anomalies_controller.put("/{anomaly_id}/acknowledge")
-def acknowledge_anomaly(anomaly_id: str) -> dict[str, Any]:
-    return {"id": anomaly_id, "status": "acknowledged"}
+@anomalies_controller.put("/{anomaly_id}/acknowledge", response_model=schemas.Anomaly)
+def acknowledge_anomaly(
+    anomaly_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.Anomaly:
+    """Acknowledge an anomaly."""
+    anomaly = anomalies_service.acknowledge_anomaly(db, current_user.tenant_id, anomaly_id)
+    if not anomaly:
+        raise HTTPException(status_code=404, detail="Anomaly not found")
+    return anomaly
 
 
-@anomalies_controller.put("/{anomaly_id}/resolve")
-def resolve_anomaly(anomaly_id: str) -> dict[str, Any]:
-    return {"id": anomaly_id, "status": "resolved"}
+@anomalies_controller.put("/{anomaly_id}/resolve", response_model=schemas.Anomaly)
+def resolve_anomaly(
+    anomaly_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.Anomaly:
+    """Resolve an anomaly."""
+    anomaly = anomalies_service.resolve_anomaly(db, current_user.tenant_id, anomaly_id)
+    if not anomaly:
+        raise HTTPException(status_code=404, detail="Anomaly not found")
+    return anomaly
 
 
-@anomalies_controller.get("/{anomaly_id}/investigate")
-def investigate_anomaly(anomaly_id: str) -> dict[str, Any]:
-    return {"id": anomaly_id, "investigation": {"steps": ["Review CloudWatch logs", "Check billing dashboard", "Notify team lead"]}}
+@anomalies_controller.get("/{anomaly_id}/investigate", response_model=schemas.AnomalyInvestigation)
+def investigate_anomaly(
+    anomaly_id: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.AnomalyInvestigation:
+    """Get investigation details for an anomaly."""
+    investigation = anomalies_service.investigate_anomaly(db, current_user.tenant_id, anomaly_id)
+    if not investigation:
+        raise HTTPException(status_code=404, detail="Anomaly not found")
+    return investigation
 
 
-@anomalies_controller.get("/timeline")
-def get_anomalies_timeline() -> list[dict[str, Any]]:
-    return [{"id": "anom-1", "service": "Lambda Functions", "detectedAt": "2026-03-12T14:32:00Z", "severity": "Critical", "spike": 340}]
+@anomalies_controller.get("/timeline/all", response_model=list[schemas.AnomalyTimeline])
+def get_anomalies_timeline(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> list[schemas.AnomalyTimeline]:
+    """Get anomalies timeline (most recent first)."""
+    return anomalies_service.get_anomalies_timeline(db, current_user.tenant_id)
 
 
-@anomalies_controller.get("/statistics")
-def get_anomalies_statistics() -> dict[str, Any]:
-    return {"total": 5, "avgSpike": 150, "bySeverity": {"Critical": 1, "High": 2, "Medium": 2}}
+@anomalies_controller.get("/statistics/summary", response_model=schemas.AnomalyStatistics)
+def get_anomalies_statistics(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.AnomalyStatistics:
+    """Get anomaly statistics."""
+    return anomalies_service.get_anomalies_statistics(db, current_user.tenant_id)
 
 
-@anomalies_controller.get("/alerts-summary")
-def get_alerts_summary() -> dict[str, Any]:
-    return {"active": 5, "acknowledged": 0, "resolved": 0}
-
-
-@anomalies_controller.get("/sample")
-def sample_anomalies():
-    return {
-        'data': [],
-        'msg': "Anomalies fetched successfully"
-    }
+@anomalies_controller.get("/alerts/summary", response_model=schemas.AlertsSummary)
+def get_alerts_summary(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> schemas.AlertsSummary:
+    """Get alerts summary (active, acknowledged, resolved counts)."""
+    return anomalies_service.get_alerts_summary(db, current_user.tenant_id)
 
