@@ -15,7 +15,7 @@ from .user import User, UserCreate, UserUpdate
 from .agent import Agent, AgentCreate, AgentWithToken
 from .ingest import ResourceRef, MetricBatch, InferenceBatch
 from .dashboard import DashboardSummary, SpendTrendPoint, CostByCategory, TopService, DashboardRefresh
-from .cost_analyzer import ServiceCost, CostByProvider, UsageMetric
+from .cost_analyzer import ServiceCost, CostByProvider, UsageMetric, ServiceExportResponse, ProviderComparison
 from .recommendation import Recommendation, RecommendationUpdate, SavingsSummary, RecommendationBase, RecommendationImpact
 from .anomaly import Anomaly, AnomalySeverity, AlertsSummary, AnomalyInvestigation, AnomalyTimeline, AnomalyStatistics
 from .report import Report, ReportCreate, ReportUpdate, ReportGenerate, ReportSchedule, ReportDownload
@@ -67,6 +67,8 @@ __all__ = [
     "ServiceCost",
     "CostByProvider",
     "UsageMetric",
+    "ServiceExportResponse",
+    "ProviderComparison",
     # Recommendation
     "Recommendation",
     "RecommendationUpdate",
