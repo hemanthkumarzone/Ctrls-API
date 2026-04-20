@@ -11,6 +11,17 @@ from passlib.context import CryptContext
 from app.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+PASSWORD_MAX_BYTES = 72
+
+
+def validate_password(password: str) -> str:
+    """Validate password length for bcrypt hashing."""
+    if len(password.encode("utf-8")) > PASSWORD_MAX_BYTES:
+        raise ValueError(
+            f"password cannot be longer than {PASSWORD_MAX_BYTES} bytes, "
+            "truncate manually if necessary (e.g. my_password[:72])"
+        )
+    return password
 
 
 def create_access_token(
@@ -66,5 +77,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def get_password_hash(password: str) -> str:
-    """Hash a password."""
+    """Hash a password after validating its bcrypt byte-length."""
+    validate_password(password)
     return pwd_context.hash(password)

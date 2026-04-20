@@ -4,8 +4,9 @@ Tenant schemas.
 
 from typing import Dict, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
+from app.core.security import validate_password
 from .base import BaseSchema, TimestampMixin
 
 
@@ -33,6 +34,10 @@ class OrgAdminCreate(BaseModel):
     admin_email: str
     admin_password: str
     admin_name: str
+
+    @field_validator("admin_password")
+    def validate_admin_password(cls, value: str) -> str:
+        return validate_password(value)
 
 
 class TenantUpdate(BaseModel):

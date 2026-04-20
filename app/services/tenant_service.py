@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from app.repositories.tenant_repo import tenant_repo
 from app.repositories.user_repo import user_repo
-from app.core.security import pwd_context
+from app.core.security import get_password_hash
 
 
 class TenantService:
@@ -26,11 +26,12 @@ class TenantService:
         existing_tenant = tenant_repo.get_by_slug(db, org_in.org_slug)
         if existing_tenant:
             raise ValueError("Organization with this slug already exists")
-
+        print("No existing organization found with slug:", org_in.org_slug)
         # Check if user email already exists
         existing_user = user_repo.get_by_email(db, email=org_in.admin_email)
         if existing_user:
             raise ValueError("Email already registered")
+        print("No existing user found with email:", org_in.admin_email)
 
         # Create tenant
         tenant = models.Tenant(
@@ -40,11 +41,13 @@ class TenantService:
             is_active=True,
             metadata_={"admin_name": org_in.admin_name}
         )
+        print("Creating tenant with data:", tenant)
         db.add(tenant)
         db.flush()  # Get the tenant ID without committing
-
+        print('flag22')
         # Create org admin user
-        hashed_password = pwd_context.hash(org_in.admin_password)
+        hashed_password = get_password_hash(org_in.admin_password)
+        print("Creating admin user with email:", org_in.admin_email)
         admin_user = models.User(
             email=org_in.admin_email,
             password_hash=hashed_password,

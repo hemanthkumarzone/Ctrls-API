@@ -4,8 +4,9 @@ Authentication schemas.
 
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
+from app.core.security import validate_password
 from .base import BaseSchema
 from .user import User
 
@@ -38,3 +39,7 @@ class UserRegister(BaseModel):
     org_slug: str
     org_admin_name: str
     role: str = "viewer"
+
+    @field_validator("password")
+    def validate_password(cls, value: str) -> str:
+        return validate_password(value)

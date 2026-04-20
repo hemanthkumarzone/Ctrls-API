@@ -99,7 +99,7 @@ class AuthService:
             raise ValueError("User with this email already exists")
 
         # Hash password
-        hashed_password = pwd_context.hash(user_in.password)
+        hashed_password = security.get_password_hash(user_in.password)
         
         # Create user directly with model
         user = models.User(
@@ -140,7 +140,7 @@ class AuthService:
             raise ValueError("Email already registered")
 
         # Hash password
-        hashed_password = pwd_context.hash(user_reg.password)
+        hashed_password = security.get_password_hash(user_reg.password)
         
         # Create user
         user = models.User(

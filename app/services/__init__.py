@@ -95,7 +95,7 @@ class AuthService:
             raise ValueError("User with this email already exists")
 
         # Hash password
-        hashed_password = pwd_context.hash(user_in.password)
+        hashed_password = security.get_password_hash(user_in.password)
         
         # Create user
         user_data = user_in.model_dump()

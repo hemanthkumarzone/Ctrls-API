@@ -4,8 +4,9 @@ User schemas.
 
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 
+from app.core.security import validate_password
 from .base import BaseSchema, TimestampMixin
 
 
@@ -22,6 +23,10 @@ class UserCreate(BaseModel):
     password: str
     role: str = "viewer"
     tenant_id: str
+
+    @field_validator("password")
+    def validate_password(cls, value: str) -> str:
+        return validate_password(value)
 
 
 class UserUpdate(BaseModel):
