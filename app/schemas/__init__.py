@@ -20,7 +20,7 @@ from .recommendation import Recommendation, RecommendationUpdate, SavingsSummary
 from .anomaly import Anomaly, AnomalySeverity, AlertsSummary, AnomalyInvestigation, AnomalyTimeline, AnomalyStatistics
 from .report import Report, ReportCreate, ReportUpdate, ReportGenerate, ReportSchedule, ReportDownload
 from .virtual_tag import VirtualTag, TagCoverage, TagRuleCreate, TagRuleUpdate, TagMapping, TagMappingCreate
-from .cost_allocation import Team, CostAllocationRule, TreemapNode, VarianceAnalysis, TeamBase, TeamBreakdown, CostAllocationRuleBase, CostAllocationRuleUpdate
+from .cost_allocation import Team, CostAllocationRule, TreemapNode, VarianceAnalysis, TeamBase, TeamBreakdown, ChargebackEntry, CostAllocationRuleBase, CostAllocationRuleUpdate
 from .unit_economics import UnitEconomicsSummary, CostPerUserTrend, BenchmarkComparison, UnitEconomicsTrend, CostPerTransactionTrend, GrossMargin
 from .forecasting import ForecastScenario, ForecastPoint, WhatIfResult, WhatIfAssumptions, CostDriver, CostDriverUpdate, ForecastAccuracy
 from .budget import Budget, BudgetCreate, BudgetUpdate, BudgetStatus, BudgetAlertSettings, BudgetBase, DailyBurnRate
