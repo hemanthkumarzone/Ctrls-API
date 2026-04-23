@@ -34,7 +34,13 @@ def get_benchmark() -> dict[str, Any]:
 
 @unit_economics_controller.get("/trends")
 def get_unit_economics_trends() -> list[dict[str, Any]]:
-    return [{"month": "Apr 2025", "costPerUser": 2.45, "costPerTransaction": 0.0032}, {"month": "Mar 2026", "costPerUser": 2.78, "costPerTransaction": 0.0040}]
+    return [{
+  "month": "Apr 2025",
+  "costPerUser": 2.45,
+  "costPerTransaction": 0.0032,
+  "revenue": 890000,
+  "margin": 74.2
+}]
 
 
 @unit_economics_controller.get("/sample")
