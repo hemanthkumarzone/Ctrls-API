@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from app.controller.email_controller import router as email_router
 
 from app.controller import (
     auth_controller,
@@ -90,6 +91,7 @@ app.include_router(budgets_controller)
 app.include_router(users_controller)
 app.include_router(user_operations_controller)
 app.include_router(virtual_tags_controller)
+app.include_router(email_router)
 
 
 @app.get("/health")

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0;background:#f5f5f5;font-family:Arial, sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;">
+<tr>
+<td align="center">
+
+<!-- MAIN CONTAINER -->
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;">
+
+<!-- DARK HEADER -->
+<tr>
+<td style="background:#051B11;padding:30px;color:white;">
+
+  <!-- LOGO -->
+  <table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td>
+
+<table cellpadding="0" cellspacing="0">
+<tr>
+
+<!-- GLOW BOX -->
+<td style="padding-right:14px;">
+  <div style="
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    position:relative;
+
+    background: linear-gradient(145deg, #0a120d, #1f2f05);
+
+    border:1px solid rgba(119,185,0,0.25);
+
+    box-shadow:
+      0 0 6px rgba(119,185,0,0.7),
+      0 0 12px rgba(119,185,0,0.6),
+      0 0 20px rgba(119,185,0,0.5),
+      0 0 28px rgba(119,185,0,0.35);
+  ">
+
+    <!-- INNER GLOW LAYER -->
+    <div style="
+      position:absolute;
+      top:4px;
+      left:4px;
+      right:4px;
+      bottom:4px;
+      border-radius:10px;
+
+      box-shadow: inset 0 0 10px rgba(119,185,0,0.35);
+    "></div>
+
+  </div>
+</td>
+
+<!-- TEXT -->
+<td style="
+  font-size:16px;
+  color:#9fdc00;
+  font-weight:bold;
+  letter-spacing:1px;
+">
+  AI FINOPS
+</td>
+
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+  <br>
+
+  <!-- SUB TEXT -->
+  <p style="font-size:12px;letter-spacing:1px;color:#b5d1c8;">
+    ENTERPRISE ACCOUNT ACTIVATED
+  </p>
+
+  <!-- MAIN HEADING -->
+  <h2 style="margin:10px 0;font-size:24px;">
+    Your AI Cost Intelligence is live.
+  </h2>
+
+  <!-- DESCRIPTION -->
+  <p style="color:#cce3dc;font-size:14px;">
+    Full-stack visibility and control over every dollar your organisation spends on AI - Starting now.
+  </p>
+
+  <br><br>
+
+  <!-- ORG + STATUS -->
+  <table width="100%">
+    <tr>
+      <td style="font-size:12px;color:#b5d1c8;">
+        REGISTERED ORGANISATION<br>
+        <span style="color:#9fdc00;font-weight:bold;">{{ organization }}</span><br>
+        <span style="font-size:11px;">{{ plan }} - {{ admin_email }}</span>
+      </td>
+
+      <td align="right">
+        <span style="background:#9fdc00;color:black;padding:8px 15px;border-radius:20px;font-size:12px;font-weight:bold;">
+          ACCOUNT ACTIVE
+        </span>
+      </td>
+    </tr>
+  </table>
+
+</td>
+</tr>
+
+<!-- WHITE SECTION -->
+<tr>
+<td style="padding:30px;color:#333;">
+
+  <p>Dear {{ name }},</p>
+
+  <p style="line-height:1.6;">
+    Welcome to AI FinOps. Your enterprise account has been successfully created and is ready to use.
+    You now have access to the full suite of AI cost management capabilities built for organisations at your scale.
+  </p>
+  <!-- ACCESS SECTION -->
+<h3 style="margin-top:30px;">WHAT YOU HAVE ACCESS TO</h3>
+<hr style="border:0;border-top:1px solid #ddd;margin:10px 0 20px;">
+
+<table width="100%" cellspacing="10">
+
+<tr>
+<td width="50%" style="border:1px solid #ddd;padding:15px;border-radius:8px;">
+  <b style="color:#6fbf00;">Spend Monitoring</b>
+  <p style="font-size:13px;color:#555;">
+    Real-time visibility into AI infrastructure costs across teams,
+    cloud providers, and workloads
+  </p>
+</td>
+
+<td width="50%" style="border:1px solid #ddd;padding:15px;border-radius:8px;">
+  <b style="color:#6fbf00;">Optimization</b>
+  <p style="font-size:13px;color:#555;">
+    Automated recommendations to right-size resources and reduce over-provisioning
+  </p>
+</td>
+</tr>
+
+<tr>
+<td width="50%" style="border:1px solid #ddd;padding:15px;border-radius:8px;">
+  <b style="color:#6fbf00;">Orchestration</b>
+  <p style="font-size:13px;color:#555;">
+    Centralized control over inference clusters, fine-tuning jobs, and batch pipelines
+  </p>
+</td>
+
+<td width="50%" style="border:1px solid #ddd;padding:15px;border-radius:8px;">
+  <b style="color:#6fbf00;">Waste Elimination</b>
+  <p style="font-size:13px;color:#555;">
+    Continuous detection and remediation of idle instances, redundant replicas, and unused quotas
+  </p>
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+
+</table>
+<!-- ACCOUNT SECTION -->
+<tr>
+<td align="center">
+
+  <!-- INNER SAME WIDTH WRAPPER -->
+  <table width="600" cellpadding="0" cellspacing="0">
+  <tr>
+  <td style="padding:0 30px; background:#ffffff;">
+
+    <!-- TOP SPACE -->
+    <div style="height:25px;"></div>
+
+    <!-- HEADING -->
+    <div style="font-size:13px;letter-spacing:1px;color:#2b2b2b;">
+      YOUR ACCOUNT DETAILS
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="height:1px;background:#dcdcdc;margin:10px 0 15px;"></div>
+
+    <!-- TABLE -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#333;">
+
+      <tr>
+        <td style="padding:12px 0;color:#777;width:50%;">Plan</td>
+        <td style="padding:12px 0;">
+          <b>Business Enterprise</b>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <div style="height:1px;background:#e6e6e6;"></div>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="padding:12px 0;color:#777;">Organization</td>
+        <td style="padding:12px 0;">
+          <b>{{ organization }}</b>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <div style="height:1px;background:#e6e6e6;"></div>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="padding:12px 0;color:#777;">Monthly Budget Cap</td>
+        <td style="padding:12px 0;">
+          <b>[Budget Limit]</b>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <div style="height:1px;background:#e6e6e6;"></div>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="padding:12px 0;color:#777;">Primary Contact</td>
+        <td style="padding:12px 0;">
+          <b>{{ admin_email }}</b>
+        </td>
+      </tr>
+
+    </table>
+
+    <!-- BOTTOM SPACE -->
+    <div style="height:25px;"></div>
+
+  </td>
+  </tr>
+  <!-- STEPS SECTION -->
+<tr>
+<td style="padding:0 30px; background:#ffffff;">
+
+<div style="height:25px;"></div>
+
+<!-- HEADING -->
+<div style="font-size:13px;letter-spacing:1px;color:#2b2b2b;">
+TO GET STARTED, WE RECOMMEND COMPLETING THREE QUICK STEPS:
+</div>
+
+<div style="height:1px;background:#dcdcdc;margin:10px 0 20px;"></div>
+
+<table width="100%" cellpadding="0" cellspacing="0">
+
+<tr>
+<td width="40" valign="top">
+<div style="width:28px;height:28px;background:#062f25;border-radius:50%;
+color:#fff;text-align:center;line-height:28px;font-size:13px;font-weight:bold;">1</div>
+</td>
+
+<td style="padding-bottom:15px;">
+<b>Connect your cloud provider(s)</b><br>
+<span style="font-size:12px;color:#777;">
+AWS, GCP, Azure, or on-premises infrastructure
+</span>
+</td>
+</tr>
+
+<tr>
+<td width="40" valign="top">
+<div style="width:28px;height:28px;background:#062f25;border-radius:50%;
+color:#fff;text-align:center;line-height:28px;font-size:13px;font-weight:bold;">2</div>
+</td>
+
+<td style="padding-bottom:15px;">
+<b>Set your budget thresholds and alert preferences</b>
+</td>
+</tr>
+
+<tr>
+<td width="40" valign="top">
+<div style="width:28px;height:28px;background:#062f25;border-radius:50%;
+color:#fff;text-align:center;line-height:28px;font-size:13px;font-weight:bold;">3</div>
+</td>
+
+<td style="padding-bottom:20px;">
+<b>Invite your team members and assign roles</b>
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+<!-- CTA BUTTON -->
+<tr>
+<td style="padding:0 30px; background:#ffffff;">
+
+<div style="text-align:center; margin:10px 0 25px 0;">
+
+<a href="#"
+style="display:inline-block;
+background:#031f18;
+color:#9fdc00;
+padding:14px 32px;
+border-radius:8px;
+text-decoration:none;
+font-weight:bold;
+font-size:14px;
+border:1px solid #9fdc00;">
+Go to your dashboard →
+</a>
+
+</div>
+
+</td>
+</tr>
+<!-- INFO BOX -->
+<tr>
+<td style="padding:0 30px; background:#ffffff;">
+
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td style="
+background:#eef3e8;
+border:1px solid #dcdcdc;
+border-radius:10px;
+padding:20px;
+">
+
+<p style="margin:0 0 10px 0;color:#333;line-height:1.5;">
+Your dedicated onboarding specialist will reach out within one business day
+to schedule a setup walkthrough tailored to your environment.
+</p>
+
+<p style="margin:0 0 10px 0;color:#333;line-height:1.5;">
+If you have any immediate questions, our enterprise support team is available at
+enterprise-support@aifinops.io or via your account dashboard.
+</p>
+
+<p style="margin:0;color:#333;line-height:1.5;">
+We look forward to helping your organisation take full control of its AI spend.
+</p>
+
+</td>
+</tr>
+</table>
+
+<div style="height:25px;"></div>
+
+</td>
+</tr>
+<!-- FOOTER -->
+<tr>
+<td style="padding:0 30px; background:#062f25; color:#9fdc00;">
+
+<table width="100%" cellpadding="0" cellspacing="0">
+
+<tr>
+<td style="padding:20px 0;font-size:14px;">
+
+<b>The AI FinOps Team</b><br>
+<span style="color:#cce3dc;">enterprise-support@aifinops.io</span><br>
+<span style="color:#cce3dc;">© 2026 AI FinOps Platform</span>
+
+</td>
+
+<td align="right" style="padding:20px 0;font-size:12px;color:#cce3dc;">
+Privacy Policy &nbsp; • &nbsp; Terms of Service
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+  </table>
+
+</td>
+</tr>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
 
 class Settings(BaseSettings):
     """Application settings."""
@@ -24,6 +25,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
+
+    EMAIL_USER: str
+    EMAIL_PASSWORD: str
 
     # Database
     POSTGRES_SERVER: str | None = os.getenv("POSTGRES_SERVER")

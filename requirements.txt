@@ -44,3 +44,5 @@ structlog==23.1.0
 pytest==7.4.2
 pytest-asyncio==0.21.0
 faker==19.6.2
+
+email-validator
