@@ -10,6 +10,13 @@ from app import schemas
 from app.api import deps
 from app.services.tenant_service import TenantService
 
+from app.services.subscription_service import (
+    subscription_service
+)
+from app.repositories.subscription_repo import (
+    subscription_repo
+)
+
 tenant_controller = APIRouter(prefix="/tenants", tags=["Tenants"])
 
 
@@ -93,6 +100,35 @@ def get_tenant_users(
 ) -> list[dict[str, Any]]:
     return [{"id": "usr-1", "email": "user@example.com", "role": "viewer", "tenant_id": tenant_id}]
 
+@tenant_controller.get("/current-subscription")
+def get_current_subscription(
+    current_user: schemas.User = Depends(
+        deps.get_current_user
+    ),
+    db: Session = Depends(deps.get_db)
+):
+
+    subscription = (
+        subscription_repo.get_by_tenant(
+            db,
+            current_user.tenant_id
+        )
+    )
+
+    if not subscription:
+        return {
+            "success": False,
+            "message": "Subscription not found"
+        }
+
+    return {
+        "success": True,
+        "plan_name": subscription.plan_name,
+        "status": subscription.status,
+        "billing_cycle": subscription.billing_cycle,
+        "auto_renew": subscription.auto_renew,
+        "trial_end_date": subscription.trial_end_date
+    }
 
 @tenant_controller.get("/{tenant_id}", response_model=schemas.Tenant)
 def read_tenant(
@@ -180,3 +216,46 @@ def delete_tenant(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
         )
+@tenant_controller.post("/expire-trials")
+def expire_trials(
+    db: Session = Depends(deps.get_db)
+):
+
+    count = (
+        subscription_service
+        .expire_trial_subscriptions(db)
+    )
+
+    return {
+        "expired": count
+    }
+@tenant_controller.post("/cancel-subscription")
+def cancel_subscription(
+    current_user: schemas.User = Depends(
+        deps.get_current_user
+    ),
+    db: Session = Depends(deps.get_db)
+):
+
+    subscription = (
+        subscription_repo.get_by_tenant(
+            db,
+            current_user.tenant_id
+        )
+    )
+
+    if not subscription:
+        return {
+            "success": False,
+            "message": "Subscription not found"
+        }
+
+    subscription_service.cancel_subscription(
+        db,
+        subscription
+    )
+
+    return {
+        "success": True,
+        "message": "Subscription cancelled successfully"
+    }

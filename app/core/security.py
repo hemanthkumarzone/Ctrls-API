@@ -62,12 +62,25 @@ def create_refresh_token(
 
 def verify_token(token: str) -> dict:
     """Verify and decode JWT token."""
+
+    print("VERIFY SECRET_KEY =", settings.SECRET_KEY)
+
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=["HS256"]
+        )
+
+        print("PAYLOAD =", payload)
+
         return payload
-    except jwt.ExpiredSignatureError:
-        raise ValueError("Token has expired")
-    except jwt.JWTError:
+
+    except Exception as e:
+
+        print("JWT ERROR =", str(e))
+
         raise ValueError("Invalid token")
 
 

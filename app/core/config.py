@@ -22,13 +22,16 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
 
     # Security
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    SECRET_KEY: str 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
 
     EMAIL_USER: str
     EMAIL_PASSWORD: str
 
+    RAZORPAY_KEY_ID: str = ""
+    RAZORPAY_KEY_SECRET: str = ""
+    RAZORPAY_WEBHOOK_SECRET: str = ""
     # Database
     POSTGRES_SERVER: str | None = os.getenv("POSTGRES_SERVER")
     POSTGRES_USER: str | None = os.getenv("POSTGRES_USER")

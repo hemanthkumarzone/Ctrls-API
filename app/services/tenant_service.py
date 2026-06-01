@@ -8,7 +8,9 @@ from app import models, schemas
 from app.repositories.tenant_repo import tenant_repo
 from app.repositories.user_repo import user_repo
 from app.core.security import get_password_hash
-
+from app.services.subscription_service import (
+    subscription_service
+)
 
 class TenantService:
     """Tenant service."""
@@ -59,7 +61,12 @@ class TenantService:
         db.commit()
         db.refresh(tenant)
         db.refresh(admin_user)
-        
+        subscription_service.create_trial_subscription(
+            db=db,
+            tenant_id=tenant.id,
+            plan_name=tenant.plan,
+            billing_cycle="monthly"
+        )
         return tenant, admin_user
 
     @staticmethod

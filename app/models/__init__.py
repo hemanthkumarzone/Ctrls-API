@@ -1,3 +1,4 @@
+from app.models.base import Base
 from .all_models import *  # noqa: F403
 
 __all__ = [
@@ -30,6 +31,8 @@ __all__ = [
     "PaymentReceipt",
     "ForecastingDriver",
     "ForecastingAccuracy",
+    "Subscription",
+    "Payment",
     # Enums
     "AcceleratorType",
     "AcceleratorStatus",
@@ -50,4 +53,5 @@ __all__ = [
     # Mixins
     "TimestampMixin",
     "TenantMixin",
+    
 ]

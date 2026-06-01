@@ -22,15 +22,16 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.models.base import Base
+
 
 
 # ──────────────────────────────────────────────
 # Base
 # ──────────────────────────────────────────────
 
-class Base(DeclarativeBase):
-    pass
+
 
 
 def gen_uuid() -> str:
@@ -147,14 +148,18 @@ class User(TimestampMixin, TenantMixin, Base):
         UUID(as_uuid=False), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False
     )
     email: Mapped[str] = mapped_column(String(255), nullable=False)
+    username: Mapped[str] = mapped_column(String(100), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(String(50), default="viewer")  # owner/admin/viewer
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-
+    is_verified: Mapped[bool] = mapped_column(Boolean,default=False)
+    two_factor_enabled: Mapped[bool] = mapped_column(Boolean,default=True)
+    two_factor_secret: Mapped[str | None] = mapped_column(String(255),nullable=True)
     tenant: Mapped[Tenant] = relationship("Tenant", back_populates="users")
 
     __table_args__ = (
         UniqueConstraint("tenant_id", "email", name="uq_user_tenant_email"),
+        UniqueConstraint("tenant_id", "username", name="uq_user_tenant_username"),
     )
 
 
@@ -996,3 +1001,204 @@ class ForecastingAccuracy(TimestampMixin, TenantMixin, Base):
     last_evaluated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     tenant: Mapped[Tenant] = relationship("Tenant")
+
+
+class EmailVerification(TimestampMixin, Base):
+
+    __tablename__ = "email_verifications"
+
+    id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False),
+        primary_key=True,
+        default=gen_uuid
+    )
+
+    # USER
+    user_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+
+    # OTP CODE
+    verification_code: Mapped[str] = mapped_column(
+        String(6),
+        nullable=False
+    )
+
+    # PURPOSE
+    # signup / forgot_password / two_factor / suspicious_login
+    purpose: Mapped[str] = mapped_column(
+        String(50),
+        default="signup",
+        nullable=False,
+        index=True
+    )
+
+    # RESET TOKEN
+    reset_token: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True
+    )
+
+    # SECURITY INFO
+    ip_address: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True
+    )
+
+    device_info: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True
+    )
+
+    location: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True
+    )
+
+    # FAILED LOGIN TRACKING
+    failed_attempts: Mapped[int] = mapped_column(
+        Integer,
+        default=0
+    )
+
+    # STATUS
+    is_used: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False
+    )
+
+    # EXPIRY
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        index=True
+    )
+
+    # RELATIONSHIP
+    user: Mapped["User"] = relationship("User")
+
+    __table_args__ = (
+        Index(
+            "ix_email_verification_user_purpose",
+            "user_id",
+            "purpose"
+        ),
+    )
+# ──────────────────────────────────────────────
+# SaaS Subscriptions
+# ──────────────────────────────────────────────
+
+class Subscription(TimestampMixin, Base):
+
+    __tablename__ = "subscriptions"
+
+    id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False),
+        primary_key=True,
+        default=gen_uuid
+    )
+
+    tenant_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False),
+        ForeignKey("tenants.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+
+    plan_name: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False
+    )
+
+    billing_cycle: Mapped[str] = mapped_column(
+        String(20),
+        default="monthly"
+    )
+
+    status: Mapped[str] = mapped_column(
+        String(20),
+        default="trial"
+    )
+
+    trial_start_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    trial_end_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    auto_renew: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False
+    )
+
+    razorpay_subscription_id: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True
+    )
+
+    tenant: Mapped["Tenant"] = relationship("Tenant")
+# ──────────────────────────────────────────────
+# Payments
+# ──────────────────────────────────────────────
+
+class Payment(TimestampMixin, Base):
+
+    __tablename__ = "payments"
+
+    id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False),
+        primary_key=True,
+        default=gen_uuid
+    )
+
+    tenant_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False),
+        ForeignKey("tenants.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+
+    subscription_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False),
+        ForeignKey("subscriptions.id", ondelete="SET NULL"),
+        nullable=True
+    )
+
+    amount: Mapped[Decimal] = mapped_column(
+        Numeric(14, 2),
+        nullable=False
+    )
+
+    currency: Mapped[str] = mapped_column(
+        String(10),
+        default="INR"
+    )
+
+    payment_status: Mapped[str] = mapped_column(
+        String(50),
+        default="pending"
+    )
+
+    razorpay_order_id: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True
+    )
+
+    razorpay_payment_id: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True
+    )
+
+    razorpay_signature: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True
+    )
+
+    tenant: Mapped["Tenant"] = relationship("Tenant")

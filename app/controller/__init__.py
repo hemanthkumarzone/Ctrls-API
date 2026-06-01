@@ -15,7 +15,7 @@ from .payment_receipts import payment_receipts_controller
 from .users import users_controller
 from .tenant import tenant_controller
 from .user_operations import user_operations_controller
-
+from .payment import router as payment_router
 __all__ = [
     "auth_controller",
     "dashboard_controller",
@@ -34,4 +34,5 @@ __all__ = [
     "forecasting_controller",
     "user_operations_controller",
     "tenant_controller"
+    "payment_router",
 ]

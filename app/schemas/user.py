@@ -12,6 +12,7 @@ from .base import BaseSchema, TimestampMixin
 
 class UserBase(BaseSchema):
     """Base user schema."""
+    username: str
     email: EmailStr
     role: str
     is_active: bool = True
@@ -20,6 +21,7 @@ class UserBase(BaseSchema):
 class UserCreate(BaseModel):
     """User creation schema."""
     email: EmailStr
+    username: str
     password: str
     role: str = "viewer"
     tenant_id: str
@@ -39,4 +41,5 @@ class UserUpdate(BaseModel):
 class User(UserBase, TimestampMixin):
     """User response schema."""
     id: str
+    username: str
     tenant_id: str

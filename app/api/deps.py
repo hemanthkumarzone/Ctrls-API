@@ -40,18 +40,37 @@ def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        print("========== AUTH DEBUG ==========")
+        print("TOKEN =", token)
+
         payload = security.verify_token(token)
+
+        print("PAYLOAD =", payload)
+
         user_id: str = payload.get("sub")
+
+        print("USER_ID =", user_id)
+
         if user_id is None:
             raise credentials_exception
-    except Exception:
+
+    except Exception as e:
+
+        print("TOKEN ERROR =", str(e))
+
         raise credentials_exception
 
     user = user_repo.get(db, id=user_id)
-    if user is None:
-        raise credentials_exception
-    return user
 
+    print("USER =", user)
+
+    if user is None:
+        print("USER NOT FOUND IN DATABASE")
+        raise credentials_exception
+
+    print("========== AUTH SUCCESS ==========")
+
+    return user
 
 def get_current_active_user(
     current_user: schemas.User = Depends(get_current_user),

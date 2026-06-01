@@ -8,8 +8,10 @@ from app import models
 
 from .auth_service import AuthService
 from .tenant_service import TenantService
-
-__all__ = ["AuthService", "TenantService"]
+from .payment_service import PaymentService
+from .subscription_service import SubscriptionService
+__all__ = ["AuthService", "TenantService", "PaymentService",
+    "SubscriptionService",]
 from app.core import security
 from app.core.config import settings
 from app.core.security import pwd_context
