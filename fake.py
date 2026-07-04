@@ -15,8 +15,6 @@ from dotenv import load_dotenv
 from app.core.config import settings
 from app.db.session import SessionLocal, engine
 from app.models.all_models import Base
-from app.repositories.user_repo import user_repo
-from app.repositories.tenant_repo import tenant_repo
 from app.services.tenant_service import TenantService
 from app.services.auth_service import AuthService
 from app import schemas
@@ -32,23 +30,24 @@ def create_test_accounts() -> None:
     db = SessionLocal()
     try:
         org_data = {
-            "org_name": "Test Corp",
-            "org_slug": "test-corp",
+            "org_name": "Auralistic",
+            "org_slug": "auralistic",
             "org_plan": "starter",
-            "admin_email": "admin@testcorp.com",
-            "admin_password": "Test@1234",
-            "admin_name": "Alice Admin",
+            "admin_email": "admin@auralistic.com",
+            "admin_password": "admin@123",
+            "admin_name": "Admin",
         }
 
         user_data = {
-            "email": "user@testcorp.com",
-            "password": "User@1234",
+            "email": "it@auralistic.com",
+            "password": "admin@123",
             "role": "viewer",
         }
 
         print("Creating tenant and admin user...")
         org_in = schemas.OrgAdminCreate(**org_data)
         tenant, admin_user = TenantService.create_tenant_with_admin(db, org_in)
+
         print("Created organization:", tenant.name, tenant.slug)
         print("Admin user:", admin_user.email)
         print("Admin tenant_id:", admin_user.tenant_id)
@@ -61,17 +60,21 @@ def create_test_accounts() -> None:
             role=user_data["role"],
             tenant_id=tenant.id,
         )
+
         viewer_user = AuthService.create_user(db, user_in)
+
         print("Created viewer user:", viewer_user.email)
         print("Viewer user id:", viewer_user.id)
 
         print("\nTest accounts created successfully.")
-        print("Admin login: admin@testcorp.com / Test@1234")
-        print("Viewer login: user@testcorp.com / User@1234")
+        print("Admin login : admin@auralistic.com / admin@123")
+        print("Viewer login: it@auralistic.com / admin@123")
         print("Use POST /auth/login with username and password.")
+
     except Exception as exc:
         db.rollback()
         print("Error creating test accounts:", repr(exc))
+
     finally:
         db.close()
 
